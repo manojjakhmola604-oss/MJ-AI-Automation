@@ -9,7 +9,7 @@ jobs:
 
     steps:
       - name: Download project
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Extract ZIP
         run: |
@@ -22,8 +22,12 @@ jobs:
           PROJECT_DIR=$(find . -name settings.gradle -o -name settings.gradle.kts | head -1 | xargs dirname)
           echo "PROJECT_DIR=$PROJECT_DIR" >> $GITHUB_ENV
 
+      - name: Fix XML
+        run: |
+          perl -0pi -e 's/&(?!(?:amp|lt|gt|quot|apos);)/&amp;/g' "$PROJECT_DIR/app/src/main/res/layout/activity_main.xml"
+
       - name: Setup Java
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
