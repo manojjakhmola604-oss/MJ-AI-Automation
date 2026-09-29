@@ -26,10 +26,12 @@ jobs:
         run: |
           perl -0pi -e 's/&(?!(?:amp|lt|gt|quot|apos);)/&amp;/g' "$PROJECT_DIR/app/src/main/res/layout/activity_main.xml"
 
-      - name: Remove sensitive phone permissions
+      - name: Remove sensitive permissions and notification listener
         run: |
-          sed -i '/android.permission.READ_PHONE_STATE/d' "$PROJECT_DIR/app/src/main/AndroidManifest.xml"
-          sed -i '/android.permission.CALL_PHONE/d' "$PROJECT_DIR/app/src/main/AndroidManifest.xml"
+          perl -0pi -e 's#\s*<uses-permission android:name="android\.permission\.READ_PHONE_STATE"\s*/>##g; s#\s*<uses-permission android:name="android\.permission\.CALL_PHONE"\s*/>##g; s#\s*<service android:name="\.SecurityNotificationListener".*?</service>##gs' "$PROJECT_DIR/app/src/main/AndroidManifest.xml"
+
+          echo "Final Manifest:"
+          cat "$PROJECT_DIR/app/src/main/AndroidManifest.xml"
 
       - name: Setup Java
         uses: actions/setup-java@v5
